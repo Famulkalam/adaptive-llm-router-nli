@@ -1,9 +1,32 @@
-# Environment
-.env
-venv/
-.venv/
+# ============================================================
+# LLMOps .gitignore — Adaptive NLI Router
+# ============================================================
 
-# Python
+# ---- API Keys & Secrets ----
+.env
+secret_keys.json
+*.key
+
+# ---- Model Weights (HuggingFace / PyTorch) ----
+*.bin
+*.safetensors
+*.h5
+*.pt
+*.pth
+*.pkl
+model_cache/
+huggingface/
+
+# ---- Datasets & Data Artifacts ----
+*.csv
+*.jsonl
+*.parquet
+data/raw/
+
+# ---- Logs ----
+*.log
+
+# ---- Python ----
 __pycache__/
 *.py[cod]
 *$py.class
@@ -12,26 +35,27 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+venv/
+.venv/
+env/
 
-# Jupyter
+# ---- Jupyter ----
 .ipynb_checkpoints/
-*.ipynb_checkpoints
 
-# Data (large files)
-data/raw/
-*.zip
-*.tar.gz
-
-# IDE
+# ---- IDE ----
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS
+# ---- OS ----
 .DS_Store
 Thumbs.db
 
-# Outputs
+# ---- Compressed ----
+*.zip
+*.tar.gz
+
+# ---- Output Figures (generated, not source) ----
 outputs/figures/*.png
 outputs/figures/*.pdf

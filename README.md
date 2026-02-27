@@ -1,208 +1,173 @@
-# Adaptive NLI Classification System
+# 🧠 Adaptive LLM Router for Natural Language Inference
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+> **53.5% cheaper. 82.8% accurate. One intelligent routing decision.**
 
-A comprehensive Natural Language Inference (NLI) system using Large Language Models with an **Adaptive AI Gatekeeper** for cost-effective inference routing.
-
-## 🎯 Project Overview
-
-This project builds an inference system to classify the relationship between premise-hypothesis pairs as:
-- **Entailment**: Hypothesis follows from the premise
-- **Contradiction**: Hypothesis contradicts the premise
-- **Neutral**: Hypothesis is unrelated to the premise
-
-### Key Features
-
-- **Multi-Strategy Prompting**: Zero-shot, One-shot, Few-shot, and Chain-of-Thought (CoT)
-- **Adaptive AI Gatekeeper**: Routes queries to cost-effective strategies based on predicted difficulty
-- **Comprehensive Evaluation**: Accuracy, Macro-F1, per-class scores, confusion analysis
-- **Cost-Benefit Analysis**: Token tracking and ROI calculation
-- **Genre-Specific Analysis**: Performance breakdown across 10 MultiNLI genres
-
-## 📊 Dataset
-
-**MultiNLI (Multi-Genre Natural Language Inference Corpus)**
-- Source: [NYU / HuggingFace](https://huggingface.co/datasets/multi_nli)
-- Size: ~433,000 labeled sentence pairs
-- Labels: Entailment, Contradiction, Neutral
-- Genres: Fiction, Government, Slate, Telephone, Travel, Facetoface, Letters, Nineeleven, OUP, Verbatim
-
-## 🏗️ Project Structure
-
-```
-LLM_Antigravity/
-├── src/
-│   ├── data/           # Data loading, preprocessing, feature extraction
-│   ├── prompts/        # Prompt templates and management
-│   ├── llm/            # LLM interfaces (Mock & Real Gemini)
-│   ├── gatekeeper/     # Adaptive routing logic
-│   └── evaluation/     # Metrics, cost analysis, visualizations
-├── notebooks/
-│   └── analysis.ipynb  # Main analysis notebook
-├── data/
-│   ├── raw/            # Downloaded MultiNLI data
-│   ├── processed/      # Cleaned and sampled data
-│   └── predictions/    # Model outputs (JSON/CSV)
-├── outputs/
-│   └── figures/        # Generated visualizations
-├── run_inference.py    # Main inference script
-├── requirements.txt    # Dependencies
-└── README.md
-```
-
-## 🚀 Quick Start
-
-### 1. Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/LLM_Antigravity.git
-cd LLM_Antigravity
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Run with Mock LLM (Testing)
-
-```bash
-# Run full pipeline with mock Gemini (no API key needed)
-python run_inference.py --mock --samples-per-genre 50
-```
-
-### 3. Run with Real Gemini API
-
-```bash
-# Set up API key
-cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY
-
-# Run with real API
-python run_inference.py --samples-per-genre 50
-```
-
-### 4. Run Jupyter Notebook
-
-```bash
-cd notebooks
-jupyter notebook analysis.ipynb
-```
-
-## 📈 Results
-
-### Strategy Comparison
-
-| Strategy   | Accuracy | Macro-F1 | Tokens/Sample |
-|------------|----------|----------|---------------|
-| Zero-shot  | ~0.70    | ~0.68    | 165           |
-| One-shot   | ~0.75    | ~0.73    | 235           |
-| Few-shot   | ~0.80    | ~0.78    | 465           |
-| CoT        | ~0.85    | ~0.83    | 500           |
-
-*Results shown are approximate from mock LLM. Actual results may vary.*
-
-### Adaptive Gatekeeper ROI
-
-- **Token Savings**: 30-50% compared to all-CoT baseline
-- **Accuracy Trade-off**: Minimal (~1-2% drop from pure CoT)
-- **Best for**: Production deployments with cost constraints
-
-## 🔧 Configuration
-
-### Environment Variables
-
-```bash
-GEMINI_API_KEY=your_api_key_here
-GEMINI_MODEL=gemini-1.5-flash  # or gemini-1.5-pro
-```
-
-### Command Line Options
-
-```bash
-python run_inference.py --help
-
-Options:
-  --mock              Use mock LLM client (no API key needed)
-  --samples-per-genre Number of samples per genre (default: 50)
-  --strategies        Strategies to run (default: all four)
-  --skip-inference    Skip inference, use cached predictions
-  --seed              Random seed for reproducibility
-```
-
-## 📚 Research Questions Addressed
-
-1. **Primary**: How does LLM performance evolve across prompting strategies?
-2. Which genres benefit most from Chain-of-Thought reasoning?
-3. Does CoT reduce the common "Neutral-Entailment" confusion?
-4. What is the cost-to-accuracy trade-off of adaptive routing?
-
-## 🧪 Evaluation Metrics
-
-### Classification Performance (40%)
-- Accuracy, Macro-F1
-- Per-class Precision, Recall, F1
-- Confusion matrix analysis
-
-### Prompt Effectiveness (20%)
-- Zero-shot vs Few-shot vs CoT comparison
-- Accuracy progression visualization
-
-### Technical Performance (20%)
-- Batch inference with retry logic
-- Token counting and cost tracking
-- Adaptive routing efficiency
-
-### Documentation & Analysis (20%)
-- Error analysis (Neutral-Entailment confusion)
-- Per-genre breakdown
-- Cost-benefit analysis
-
-## 📁 Output Files
-
-After running the pipeline:
-
-```
-data/predictions/
-├── zero-shot_predictions.csv
-├── one-shot_predictions.csv
-├── few-shot_predictions.csv
-├── cot_predictions.csv
-├── strategy_comparison.csv
-└── final_results.json
-
-outputs/figures/
-├── strategy_comparison.png
-├── prompt_progression.png
-├── confusion_matrices_all.png
-├── genre_accuracy_heatmap.png
-├── cost_accuracy_frontier.png
-├── feature_importance.png
-└── summary_dashboard.png
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [MultiNLI Dataset](https://cims.nyu.edu/~sbowman/multinli/) - NYU
-- [HuggingFace Datasets](https://huggingface.co/datasets/multi_nli)
-- [Google Gemini API](https://ai.google.dev/)
+An MSc-level LLMOps system that dynamically routes NLI tasks between cheap Zero-shot prompts and expensive Few-shot prompts based on linguistic complexity — achieving near-flagship accuracy at half the cost.
 
 ---
 
-**Note**: This project was developed as part of an LLM-based NLI classification exercise. The mock LLM provides approximate accuracy patterns for testing; actual results with real APIs may vary.
+## 🏆 Performance Leaderboard
+
+| Strategy | Accuracy | Macro F1 | Cost | Verdict |
+|:---|:---:|:---:|:---:|:---|
+| **Few-Shot (GPT-4o)** | **84.0%** | **0.839** | $$ | Accuracy Champion |
+| **BERT (DistilRoBERTa)** | **83.6%** | **0.836** | $0 | Value Champion |
+| **Adaptive Router** | **82.8%** | **0.831** | $ | **ROI Champion (53.5% savings)** |
+| Zero-Shot (GPT-4o) | 78.7% | 0.786 | $ | Baseline |
+| Chain-of-Thought | 72.0% | 0.715 | $$$ | Over-reasoning trap |
+
+---
+
+## 🔍 The Problem
+
+Large Language Models are powerful but expensive. Running every NLI sample through a 6-shot GPT-4o prompt burns tokens on cases that a simple Zero-shot prompt handles perfectly. Meanwhile, Chain-of-Thought (CoT) reasoning — long considered the gold standard — actually **hurts** performance on conversational text.
+
+## 💡 The Solution: Adaptive Heuristic Routing
+
+Our system extracts three linguistic features from each premise–hypothesis pair:
+
+| Feature | Threshold | Signal |
+|:---|:---:|:---|
+| **Character Length** | > 220 chars | Dense, complex input |
+| **Negation Count** | ≥ 3 | Multi-layered logic |
+| **Lexical Overlap** | < 0.4 (Jaccard) | Low surface similarity |
+
+If **all three** conditions are met → route to **6-Shot** (expensive but precise).  
+Otherwise → route to **Zero-Shot** (cheap and fast).  
+Special case: **Government** and **OUP** genres → **6-Shot + CoT hybrid**.
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.10+
+- OpenAI API key
+
+### Installation
+
+```bash
+git clone https://github.com/Famulkalam/adaptive-llm-router-nli.git
+cd adaptive-llm-router-nli
+
+python3 -m venv venv
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+### Configuration
+```bash
+cp .env.example .env
+# Edit .env and add your OpenAI API key
+```
+
+### Run the Adaptive Pipeline
+```bash
+python main.py
+```
+
+### Run BERT Baseline (No API key needed)
+```bash
+python run_bert.py
+```
+
+> [!WARNING]
+> **💰 Cost Warning**: Running the full pipeline via GPT-4o will incur OpenAI API costs (~$0.02–$0.04 per 250 samples). Use the `--sample_size` flag or modify `samples_per_genre` in `main.py` to test on a smaller batch first.
+
+---
+
+## 📂 Project Structure
+
+```
+adaptive-llm-router-nli/
+├── main.py                     # Async pipeline entry point
+├── run_inference.py             # Original sync inference runner
+├── run_bert.py                  # BERT baseline evaluation
+├── generate_final_comparison.py # Comparison chart generator
+├── Final_Technical_Report.md    # 10-page technical report
+│
+├── src/
+│   ├── data/
+│   │   ├── loader.py            # MultiNLI dataset loader (HuggingFace)
+│   │   ├── preprocessor.py      # Stratified sampling & cleaning
+│   │   └── features.py          # Linguistic feature extraction
+│   │
+│   ├── llm/
+│   │   ├── base.py              # Abstract LLM interface
+│   │   ├── openai_client.py     # Sync OpenAI client
+│   │   ├── async_openai.py      # Async OpenAI client
+│   │   ├── async_batch.py       # Concurrent batch processor
+│   │   ├── batch.py             # Sync batch processor
+│   │   ├── gemini.py            # Google Gemini client
+│   │   └── mock_gemini.py       # Mock client for testing
+│   │
+│   ├── gatekeeper/
+│   │   ├── adaptive_gatekeeper.py  # Heuristic complexity router
+│   │   ├── classifier.py          # ML-based gatekeeper (v1)
+│   │   └── router.py              # Routing logic
+│   │
+│   ├── prompts/
+│   │   ├── templates.py         # Zero/Few/CoT/6-shot templates
+│   │   └── manager.py           # Prompt management system
+│   │
+│   └── evaluation/
+│       ├── metrics.py           # Classification metrics
+│       ├── cost_analysis.py     # Cost-benefit analysis
+│       └── visualizations.py    # Chart generation
+│
+├── notebooks/
+│   └── analysis.ipynb           # Interactive analysis notebook
+│
+├── .env.example                 # Environment variable template
+├── .gitignore                   # LLMOps-safe exclusions
+└── requirements.txt             # Python dependencies
+```
+
+---
+
+## 🧪 Key Discovery: The CoT Paradox
+
+We found that **Chain-of-Thought prompting reduces accuracy** for NLI tasks:
+
+- **GPT-4o-mini**: Zero-shot (85.3%) vs CoT (68.0%) → **17% drop**
+- **GPT-4o**: Few-shot (84.0%) vs CoT (72.0%) → **12% drop**
+
+CoT forces the model to over-analyze conversational text, interpreting casual speech patterns as logical contradictions. This finding led us to eliminate CoT from the default pipeline entirely.
+
+---
+
+## 📊 Evaluation Dataset
+
+- **Source**: [MultiNLI](https://huggingface.co/datasets/multi_nli) (Multi-Genre NLI)
+- **Sampling**: 50 samples × 5 genres = 250 samples (stratified, label-balanced)
+- **Genres**: Fiction, Government, Slate, Telephone, Travel
+- **Labels**: Entailment, Neutral, Contradiction
+
+The dataset is downloaded automatically via the `datasets` library on first run — no manual downloads needed.
+
+---
+
+## 🔧 Technologies
+
+| Component | Technology |
+|:---|:---|
+| LLM Provider | OpenAI (GPT-4o, GPT-4o-mini) |
+| Local Baseline | DistilRoBERTa (cross-encoder/nli-distilroberta-base) |
+| Async Engine | asyncio + AsyncOpenAI |
+| Feature Extraction | NLTK, custom heuristics |
+| Evaluation | scikit-learn, pandas |
+| Visualization | matplotlib, seaborn |
+
+---
+
+## 📄 License
+
+This project is for academic and research purposes.
+
+---
+
+## 👤 Author
+
+**Famul Kalam**  
+[GitHub](https://github.com/Famulkalam)
