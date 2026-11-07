@@ -1,44 +1,67 @@
-# 🧠 Adaptive LLM Router for Natural Language Inference
+# Adaptive LLM Router for Natural Language Inference
 
-> **53.5% cheaper. 82.8% accurate. One intelligent routing decision.**
+Routes each natural language inference (NLI) example to either a cheap
+zero-shot GPT-4o prompt or a more expensive 6-shot prompt, based on simple
+linguistic complexity features, and compares the result with always using
+the expensive prompt and with a free local model.
 
-An MSc-level LLMOps system that dynamically routes NLI tasks between cheap Zero-shot prompts and expensive Few-shot prompts based on linguistic complexity — achieving near-flagship accuracy at half the cost.
+**Headline result:** the router kept 82.8% accuracy (against 84.0% for
+always using 6-shot GPT-4o) while cutting token cost by 53.5%. A free
+DistilRoBERTa cross-encoder reached 83.6%, which is the more practical
+finding: for this task a small specialised model matches the LLM.
 
----
-
-## 🏆 Performance Leaderboard
-
-| Strategy | Accuracy | Macro F1 | Cost | Verdict |
-|:---|:---:|:---:|:---:|:---|
-| **Few-Shot (GPT-4o)** | **84.0%** | **0.839** | $$ | Accuracy Champion |
-| **BERT (DistilRoBERTa)** | **83.6%** | **0.836** | $0 | Value Champion |
-| **Adaptive Router** | **82.8%** | **0.831** | $ | **ROI Champion (53.5% savings)** |
-| Zero-Shot (GPT-4o) | 78.7% | 0.786 | $ | Baseline |
-| Chain-of-Thought | 72.0% | 0.715 | $$$ | Over-reasoning trap |
+> Developed from group coursework on NLI at the University of Edinburgh
+> Business School (2026), in which I led the evaluation pipeline.
 
 ---
 
-## 🔍 The Problem
+## Results
 
-Large Language Models are powerful but expensive. Running every NLI sample through a 6-shot GPT-4o prompt burns tokens on cases that a simple Zero-shot prompt handles perfectly. Meanwhile, Chain-of-Thought (CoT) reasoning — long considered the gold standard — actually **hurts** performance on conversational text.
+| Strategy | Accuracy | Macro F1 | Relative cost |
+|:---|:---:|:---:|:---|
+| 6-shot GPT-4o | 84.0% | 0.839 | High |
+| DistilRoBERTa cross-encoder (local) | 83.6% | 0.836 | None (runs locally) |
+| Adaptive router (GPT-4o) | 82.8% | 0.831 | 53.5% below 6-shot |
+| Zero-shot GPT-4o | 78.7% | 0.786 | Low |
+| Chain-of-thought GPT-4o | 72.0% | 0.715 | Highest |
 
-## 💡 The Solution: Adaptive Heuristic Routing
+Notes for reading the table:
 
-Our system extracts three linguistic features from each premise–hypothesis pair:
+- The evaluation sets are small (a few hundred MultiNLI pairs), so
+  differences of about 1 to 2 percentage points between the top three rows
+  are within sampling noise.
+- The local baseline is the off-the-shelf `cross-encoder/nli-distilroberta-base`
+  model, which was already trained on MultiNLI, so it is tested on its home
+  dataset. It was not fine-tuned in this project.
+- Experiments in `Final_Technical_Report.md` were run at different stages
+  with different sample sizes; `main.py` as committed reproduces the
+  250-pair setup described below.
+
+## The problem
+
+Running every example through a 6-shot GPT-4o prompt spends tokens on cases
+a zero-shot prompt already gets right. Chain-of-thought prompting, often
+assumed to help, lowered accuracy here.
+
+## The routing rule
+
+Three features are extracted from each premise and hypothesis pair:
 
 | Feature | Threshold | Signal |
 |:---|:---:|:---|
-| **Character Length** | > 220 chars | Dense, complex input |
-| **Negation Count** | ≥ 3 | Multi-layered logic |
-| **Lexical Overlap** | < 0.4 (Jaccard) | Low surface similarity |
+| Character length | > 220 chars | Dense, complex input |
+| Negation count | ≥ 3 | Multi-layered logic |
+| Lexical overlap | < 0.4 (Jaccard) | Low surface similarity |
 
-If **all three** conditions are met → route to **6-Shot** (expensive but precise).  
-Otherwise → route to **Zero-Shot** (cheap and fast).  
-Special case: **Government** and **OUP** genres → **6-Shot + CoT hybrid**.
+If **all three** conditions are met, the example goes to the 6-shot prompt;
+otherwise it goes to zero-shot. Government and OUP genre examples go to a
+6-shot plus chain-of-thought hybrid. (OUP only appears in MultiNLI's
+mismatched validation split, so that part of the rule does not fire in the
+default `main.py` run.)
 
 ---
 
-## 🚀 Quick Start
+## Quick start
 
 ### Prerequisites
 - Python 3.10+
@@ -73,11 +96,11 @@ python run_bert.py
 ```
 
 > [!WARNING]
-> **💰 Cost Warning**: Running the full pipeline via GPT-4o will incur OpenAI API costs (~$0.02–$0.04 per 250 samples). Use the `--sample_size` flag or modify `samples_per_genre` in `main.py` to test on a smaller batch first.
+> **Cost warning:** running the pipeline calls the OpenAI API and costs money; 6-shot and chain-of-thought prompts are several times more expensive than zero-shot. Lower `samples_per_genre` in `main.py` (default 50) to test on a small batch first.
 
 ---
 
-## 📂 Project Structure
+## Project structure
 
 ```
 adaptive-llm-router-nli/
@@ -85,7 +108,7 @@ adaptive-llm-router-nli/
 ├── run_inference.py             # Original sync inference runner
 ├── run_bert.py                  # BERT baseline evaluation
 ├── generate_final_comparison.py # Comparison chart generator
-├── Final_Technical_Report.md    # 10-page technical report
+├── Final_Technical_Report.md    # Technical report
 │
 ├── src/
 │   ├── data/
@@ -126,34 +149,37 @@ adaptive-llm-router-nli/
 
 ---
 
-## 🧪 Key Discovery: The CoT Paradox
+## Finding: chain-of-thought hurt accuracy
 
-We found that **Chain-of-Thought prompting reduces accuracy** for NLI tasks:
+On this data, chain-of-thought prompting lowered accuracy:
 
-- **GPT-4o-mini**: Zero-shot (85.3%) vs CoT (68.0%) → **17% drop**
-- **GPT-4o**: Few-shot (84.0%) vs CoT (72.0%) → **12% drop**
+- **GPT-4o-mini**: zero-shot 85.3% vs chain-of-thought 68.0% (17.3 percentage points lower)
+- **GPT-4o**: few-shot 84.0% vs chain-of-thought 72.0% (12.0 points lower)
 
-CoT forces the model to over-analyze conversational text, interpreting casual speech patterns as logical contradictions. This finding led us to eliminate CoT from the default pipeline entirely.
+Inspecting errors suggested the model over-analysed conversational text and
+read casual phrasing as contradiction. Chain-of-thought was therefore left
+out of the default pipeline.
 
 ---
 
-## 📊 Evaluation Dataset
+## Evaluation dataset
 
 - **Source**: [MultiNLI](https://huggingface.co/datasets/multi_nli) (Multi-Genre NLI)
-- **Sampling**: 50 samples × 5 genres = 250 samples (stratified, label-balanced)
+- **Split**: `validation_matched` (default in `main.py`)
+- **Sampling**: 50 samples × 5 genres = 250 pairs (stratified, label-balanced)
 - **Genres**: Fiction, Government, Slate, Telephone, Travel
 - **Labels**: Entailment, Neutral, Contradiction
 
-The dataset is downloaded automatically via the `datasets` library on first run — no manual downloads needed.
+The dataset is downloaded automatically via the `datasets` library on first run, so no manual download is needed.
 
 ---
 
-## 🔧 Technologies
+## Technologies
 
 | Component | Technology |
 |:---|:---|
 | LLM Provider | OpenAI (GPT-4o, GPT-4o-mini) |
-| Local Baseline | DistilRoBERTa (cross-encoder/nli-distilroberta-base) |
+| Local Baseline | DistilRoBERTa cross-encoder (`cross-encoder/nli-distilroberta-base`, pre-trained on MultiNLI) |
 | Async Engine | asyncio + AsyncOpenAI |
 | Feature Extraction | NLTK, custom heuristics |
 | Evaluation | scikit-learn, pandas |
@@ -161,13 +187,13 @@ The dataset is downloaded automatically via the `datasets` library on first run 
 
 ---
 
-## 📄 License
+## Licence
 
 This project is for academic and research purposes.
 
 ---
 
-## 👤 Author
+## Author
 
-**Famul Kalam**  
-[GitHub](https://github.com/Famulkalam)
+Famul Kalam, MSc Business Analytics, University of Edinburgh.
+[LinkedIn](https://www.linkedin.com/in/famulkalam)

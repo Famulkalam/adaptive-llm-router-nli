@@ -2,6 +2,9 @@
 **Project Title**: Optimized Natural Language Inference using Large Language Models and Specialized Baselines
 **Author**: Famul Kalam
 **Date**: February 4, 2026
+**Context**: Developed from group coursework at the University of Edinburgh Business School; I led the evaluation pipeline.
+
+> **Note (November 2026):** the experiments below were run at different stages with different sample sizes. `main.py` as committed samples 250 pairs (50 per genre) from the `validation_matched` split, so Section 3.1's description of 500 pairs over 10 genres applies only to runs that combined the matched and mismatched splits. The DistilRoBERTa baseline is the off-the-shelf `cross-encoder/nli-distilroberta-base` model, already trained on MultiNLI; it was not fine-tuned in this project.
 
 ---
 
@@ -106,7 +109,7 @@ The project successfully demonstrated that while flagship LLMs provide the highe
 
 ### 8.1 Final Verdict
 1.  **Simplicity is Robust**: For NLI, complex reasoning (CoT) is often counter-productive for general text.
-2.  **Specialization is Powerful**: A BERT model fine-tuned on MNLI is 99% as accurate as GPT-4o Few-shot at 0% of the cost.
+2.  **Specialization is Powerful**: An off-the-shelf DistilRoBERTa model already trained on MNLI reached 99% of GPT-4o few-shot accuracy with no API cost.
 3.  **Adaptive Routing works**: Even in the absence of local models, routing based on linguistic complexity can cut operational costs by over 50% with negligible loss in precision.
 
 ---

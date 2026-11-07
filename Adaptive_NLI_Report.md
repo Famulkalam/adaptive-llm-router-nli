@@ -1,6 +1,6 @@
 # Adaptive NLI Classification - The Complete Journey 🚀
 
-This document provides a comprehensive end-to-end walkthrough of the project, documenting every approach, result, and insight gained from the initial system design to the final optimized production state.
+This document provides a comprehensive end-to-end walkthrough of the project, documenting every approach, result, and insight gained from the initial system design to the final pipeline.
 
 ---
 
@@ -67,18 +67,18 @@ This document provides a comprehensive end-to-end walkthrough of the project, do
 | **4** | Zero-Shot (GPT-4o) | 78.7% | $ | Baseline |
 | **5** | Chain-of-Thought | 72.0% | $$$ | Logic Baseline |
 
-*   **Conclusion**: **Specialization beats general intelligence** for static tasks. A local BERT model achieves near-flagship performance at zero API cost.
+*   **Conclusion**: For this task, an off-the-shelf DistilRoBERTa model already trained on MultiNLI comes within half a point of GPT-4o few-shot with no API cost.
 
 ---
 
-## 📈 Visual Journey
-````carousel
-![Genre Performance Breakdown](/Users/famulkalam/.gemini/antigravity/brain/e48ba432-0b30-4ea9-a127-379f2fa27068/genre_performance.png)
-<!-- slide -->
-![Refined Adaptive Heatmap](/Users/famulkalam/.gemini/antigravity/brain/e48ba432-0b30-4ea9-a127-379f2fa27068/genre_heatmap.png)
-<!-- slide -->
-![Final Accuracy Leaderboard](/Users/famulkalam/.gemini/antigravity/brain/e48ba432-0b30-4ea9-a127-379f2fa27068/final_comparison.png)
-````
+## 📈 Figures
+The charts (genre performance, routing heatmap and final accuracy comparison) are generated locally and are not stored in the repository:
+
+```bash
+python generate_genre_plot.py
+python generate_final_comparison.py
+python main.py            # also writes outputs/figures/genre_heatmap.png
+```
 
 ---
 
