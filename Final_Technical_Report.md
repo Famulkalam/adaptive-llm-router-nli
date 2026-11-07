@@ -16,7 +16,7 @@ The final system achieves a peak accuracy of **84.0%** (Few-shot GPT-4o) and pro
 ---
 
 ## 2. Introduction
-Natural Language Inference (NLI) is a core task in NLP that requires determining the logical relationship (entailment, neutral, or contradiction) between a premise and a hypothesis. While flagship LLMs offer high accuracy, their cost and latency are often prohibitive for large-scale production. This project aims to bridge the gap between "State of the Art" and "Cost Efficiency" through an Adaptive Gatekeeper system.
+Natural Language Inference (NLI) is a core task in NLP that requires determining the logical relationship (entailment, neutral, or contradiction) between a premise and a hypothesis. While flagship LLMs offer high accuracy, their cost and latency are often prohibitive for large-scale production. This project tests whether routing easy examples to cheaper prompts can keep accuracy close to the best prompt while cutting cost.
 
 ---
 

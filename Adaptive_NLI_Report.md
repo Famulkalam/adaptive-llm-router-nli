@@ -59,11 +59,11 @@ This document provides a comprehensive end-to-end walkthrough of the project, do
 **Goal**: Compare LLMs against a small, specialized fine-tuned model (`DistilRoBERTa`).
 
 ### 📊 The Final Leaderboard
-| Rank | Strategy | Accuracy | Cost | Champion Title |
+| Rank | Strategy | Accuracy | Cost | Note |
 | :--- | :--- | :---: | :---: | :--- |
-| **1** | **Few-Shot (GPT-4o)** | **84.0%** | $$ | **Accuracy Champion** |
-| **2** | **BERT (DistilRoBERTa)** | **83.6%** | **$ 0** | **Value Champion** |
-| **3** | **Refined Adaptive** | 82.8% | $$ | **ROI Champion (53.5% Savings)** |
+| **1** | **Few-Shot (GPT-4o)** | **84.0%** | $$ | Highest accuracy |
+| **2** | **BERT (DistilRoBERTa)** | **83.6%** | **$ 0** | No API cost (local model) |
+| **3** | **Refined Adaptive** | 82.8% | $$ | 53.5% cheaper than 6-shot |
 | **4** | Zero-Shot (GPT-4o) | 78.7% | $ | Baseline |
 | **5** | Chain-of-Thought | 72.0% | $$$ | Logic Baseline |
 
